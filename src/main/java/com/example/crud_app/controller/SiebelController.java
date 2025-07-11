@@ -19,14 +19,19 @@ public class SiebelController {
     @Autowired
     private UserService userService;
 
-    @PostMapping(consumes = "text/xml", produces = "text/xml")
-    public ResponseEntity<String> handlePostRequest(@RequestBody String requestBody) {
-        if (requestBody.contains("<siebel-xmlext-fields-req")) {
+    @PostMapping(produces = "text/xml") 
+    public ResponseEntity<String> handlePostRequest(@RequestBody(required = false) String requestBody) {
+        System.out.println("Received body: " + requestBody);
+        System.out.println(">>> Incoming request to /siebel <<<");
+        if (requestBody != null && requestBody.contains("<siebel-xmlext-fields-req")) {
+            System.out.println("Received Request:\n" + requestBody);
             return ResponseEntity.ok(buildInitResponse());
-        } else if (requestBody.contains("<siebel-xmlext-query-req")) {
+        } else if (requestBody != null && requestBody.contains("<siebel-xmlext-query-req")) {
             List<User> users = userService.getAllUsers();
+            System.out.println("Received Query Request:\n" + requestBody);
             return ResponseEntity.ok(buildQueryResponse(users));
         } else {
+            System.out.println("Invalid Request:\n" + requestBody);
             return ResponseEntity.badRequest().body("Invalid request");
         }
     }
