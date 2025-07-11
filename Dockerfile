@@ -1,4 +1,11 @@
+# Build stage
+FROM maven:3.8.7-openjdk-11 AS build
+WORKDIR /app
+COPY . .
+RUN mvn clean package -DskipTests
+
+# Run stage
 FROM openjdk:11-jre-slim
-VOLUME /tmp
-COPY target/crud_app-0.0.1-SNAPSHOT.jar app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
