@@ -19,7 +19,7 @@ public class SiebelController {
     @Autowired
     private UserService userService;
 
-    @PostMapping(produces = "text/xml") 
+    @PostMapping(value = "", consumes = "text/xml", produces = "text/xml")
     public ResponseEntity<String> handlePostRequest(@RequestBody(required = false) String requestBody) {
         System.out.println("Received body: " + requestBody);
         System.out.println(">>> Incoming request to /siebel <<<");
