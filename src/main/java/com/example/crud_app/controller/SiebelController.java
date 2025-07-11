@@ -1,9 +1,13 @@
 package com.example.crud_app.controller;
 
+import java.net.URL;
 import java.util.List;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,7 +52,8 @@ public class SiebelController {
         System.out.println(">>> Incoming request to /siebel <<<");
 
         request.getHeaderNames().asIterator()
-                .forEachRemaining(header -> System.out.println(header + "-------HEADER-------: " + request.getHeader(header)));
+                .forEachRemaining(
+                        header -> System.out.println(header + "-------HEADER-------: " + request.getHeader(header)));
 
         if (requestBody == null || requestBody.trim().isEmpty()) {
             System.out.println("No body received!");
@@ -68,6 +73,17 @@ public class SiebelController {
             System.out.println("Unrecognized Request Type");
             return ResponseEntity.badRequest().body("Invalid request");
         }
+    }
+
+    @GetMapping("/test-ssl")
+    public ResponseEntity<String> testSSL() throws Exception {
+        System.out.println("-----Test SSL--- ");
+
+        URL url = new URL("https://www.google.com");
+        HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+        con.setRequestMethod("GET");
+        con.getResponseCode(); // Trigger SSL handshake
+        return ResponseEntity.ok("SSL Test Done");
     }
 
     // Build and return the <init> response XML
