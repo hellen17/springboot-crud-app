@@ -57,7 +57,8 @@ public class SiebelController {
 
         if (requestBody == null || requestBody.trim().isEmpty()) {
             System.out.println("No body received!");
-            return ResponseEntity.badRequest().body("No XML body received");
+            return ResponseEntity
+                    .ok("<?xml version=\"1.0\"?><siebel-error>No input received</siebel-error>");
         }
 
         System.out.println("Received body: " + requestBody);
@@ -71,7 +72,8 @@ public class SiebelController {
             return ResponseEntity.ok(buildQueryResponse(users));
         } else {
             System.out.println("Unrecognized Request Type");
-            return ResponseEntity.badRequest().body("Invalid request");
+            return ResponseEntity
+                    .ok("<?xml version=\"1.0\"?><siebel-error>Bad request</siebel-error>");
         }
     }
 
