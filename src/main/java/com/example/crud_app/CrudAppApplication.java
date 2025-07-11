@@ -7,7 +7,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class CrudAppApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(CrudAppApplication.class, args);
-	}
+    // Redirect SSL debug logs to standard output
+    System.setErr(System.out);
+    SpringApplication.run(CrudAppApplication.class, args);
+}
+
 
 }
