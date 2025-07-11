@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.crud_app.model.User;
 import com.example.crud_app.service.UserService;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("/siebel")
 public class SiebelController {
@@ -19,19 +21,51 @@ public class SiebelController {
     @Autowired
     private UserService userService;
 
-    @PostMapping(value = "", consumes = "text/xml", produces = "text/xml")
-    public ResponseEntity<String> handlePostRequest(@RequestBody(required = false) String requestBody) {
-        System.out.println("Received body: " + requestBody);
+    // @PostMapping(value = "", consumes = "text/xml", produces = "text/xml")
+    // public ResponseEntity<String> handlePostRequest(@RequestBody(required =
+    // false) String requestBody) {
+    // System.out.println("Received body: " + requestBody);
+    // System.out.println(">>> Incoming request to /siebel <<<");
+    // if (requestBody != null && requestBody.contains("<siebel-xmlext-fields-req"))
+    // {
+    // System.out.println("Received Request:\n" + requestBody);
+    // return ResponseEntity.ok(buildInitResponse());
+    // } else if (requestBody != null &&
+    // requestBody.contains("<siebel-xmlext-query-req")) {
+    // List<User> users = userService.getAllUsers();
+    // System.out.println("Received Query Request:\n" + requestBody);
+    // return ResponseEntity.ok(buildQueryResponse(users));
+    // } else {
+    // System.out.println("Invalid Request:\n" + requestBody);
+    // return ResponseEntity.badRequest().body("Invalid request");
+    // }
+    // }
+    @PostMapping(consumes = "text/xml", produces = "text/xml")
+    public ResponseEntity<String> handlePostRequest(
+            @RequestBody(required = false) String requestBody,
+            HttpServletRequest request) {
+
         System.out.println(">>> Incoming request to /siebel <<<");
-        if (requestBody != null && requestBody.contains("<siebel-xmlext-fields-req")) {
-            System.out.println("Received Request:\n" + requestBody);
+
+        request.getHeaderNames().asIterator()
+                .forEachRemaining(header -> System.out.println(header + "-------HEADER-------: " + request.getHeader(header)));
+
+        if (requestBody == null || requestBody.trim().isEmpty()) {
+            System.out.println("No body received!");
+            return ResponseEntity.badRequest().body("No XML body received");
+        }
+
+        System.out.println("Received body: " + requestBody);
+
+        if (requestBody.contains("<siebel-xmlext-fields-req")) {
+            System.out.println("Detected INIT Request");
             return ResponseEntity.ok(buildInitResponse());
-        } else if (requestBody != null && requestBody.contains("<siebel-xmlext-query-req")) {
+        } else if (requestBody.contains("<siebel-xmlext-query-req")) {
+            System.out.println("Detected QUERY Request");
             List<User> users = userService.getAllUsers();
-            System.out.println("Received Query Request:\n" + requestBody);
             return ResponseEntity.ok(buildQueryResponse(users));
         } else {
-            System.out.println("Invalid Request:\n" + requestBody);
+            System.out.println("Unrecognized Request Type");
             return ResponseEntity.badRequest().body("Invalid request");
         }
     }
